@@ -1,6 +1,10 @@
 # redbus-
 Redbus Data Scraping with Selenium & Dynamic Filtering using Streamlit
 
+Link for the Streamlit main page:
+Local URL: http://localhost:8501
+Network URL: http://192.168.1.100:8501
+
 Python script for Streamlit application.
 
 import streamlit as st
