@@ -1,5 +1,8 @@
 # redbus-
 Redbus Data Scraping with Selenium & Dynamic Filtering using Streamlit
+
+Python script for Streamlit application.
+
 import streamlit as st
 import pandas as pd
 import mysql.connector
