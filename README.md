@@ -1,96 +1,16 @@
 # redbus-
 Redbus Data Scraping with Selenium & Dynamic Filtering using Streamlit
-
 import streamlit as st
 import pandas as pd
 import mysql.connector
+import pymysql
 
- 
+# Sidebar Navigation
+st.sidebar.title("REDBUS")
+page = st.sidebar.radio("Go to", ["📃 Home", "🔎 Search Buses"])
 
-# Map state names to their corresponding file paths
-file_paths = {
-    "Kerala": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_KR.csv",
-    "Kadamba": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_KT.csv",
-    "West Bengal": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_WB.csv",
-    "Bihar": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_BH.csv",
-    "Assam": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_AS.csv",
-    "Himachal": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_HP.csv",
-    "Chandigarh": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_CH.csv",
-    "Jammu": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_JK.csv",
-    "Telangana": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_TG.csv",
-    "Uttar Pradesh": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_UP.csv",
-}
-
-# States Page
-def states_page():
-    st.header("🏙️ Bus Routes by States")
-
-    # Dropdown for state selection
-    selected_state = st.selectbox("Select a State", list(file_paths.keys()))
-
-    # Fare range selection
-    fare_range = st.selectbox("Choose Bus Fare Range", ["100-1000", "1000-2000", "2000 and above"])
-
-    # Display routes for the selected state
-    if selected_state:
-        file_path = file_paths[selected_state]
-        st.write(f"Routes for {selected_state}:")
-        try:
-            #Read routes from CSV
-            df = pd.read_csv(file_path)
-            routes = df.iloc[:, 0].tolist()  # Assuming the first column contains route names 
-            st.selectbox(f"Select a Route in {selected_state}", routes)  
-
-        except Exception as e:
-            st.error(f"Error loading routes for {selected_state}: {e}")
-        
-      
-        try:
-        
-             # Database connection
-            mydb = mysql.connector.connect(
-                 host="localhost",
-                 user="root",
-                 password="",
-                 database="project_one"
-             )
-
-            print(mydb)
-            mycursor = mydb.cursor()
-            if fare_range == "100-1000":
-                 query = f'''SELECT * FROM bus_routes
-                              WHERE price BETWEEN 100 AND 1000 AND route_name = '{routes}'
-                              ORDER BY price DESC'''
-            elif fare_range == "1000-2000":
-                 query = f'''SELECT * FROM bus_routes
-                              WHERE price BETWEEN 1000 AND 2000 AND route_name = '{routes}'
-                              ORDER BY price DESC'''
-            else:  # 2000 and above
-                 query = f'''SELECT * FROM bus_routes
-                              WHERE price > 2000 AND route_name = '{routes}'
-                              ORDER BY price DESC'''
-            mycursor.execute(query)
-            print(mycursor.fetchall())
-            result = mycursor.fetchall()
-            if result:
-                 df = pd.DataFrame(result, columns=[
-                     "ID", "route_name", "route_link", "bus_name", "bus_type",
-                     "departing_time", "duration", "reaching_time", "star_rating",
-                     "price", "seat_availability"
-                 ])
-                 st.dataframe(df)
-            else:
-                 st.warning(f"No routes found for {routes} in the selected fare range.")
-        except mysql.connector.Error as err:
-            print("Error:", e)
-        finally:
-            if mydb.is_connected():
-                mycursor.close()
-                mydb.close()
-                print("MySQL connection is closed")        
-           
-def home_page():
-    # Custom CSS for styling
+if page == "📃 Home":
+        # Custom CSS for styling
     st.markdown("""
         <style>
         .main-title {
@@ -108,8 +28,8 @@ def home_page():
         }
         .feature-box {
             background-color: #F0F0F0;
-            border-radius: 10px;
-            padding: 20px;
+            border-radius: 5px;
+            padding: 5px;
             text-align: center;
             transition: transform 0.3s ease;
         }
@@ -149,19 +69,65 @@ def home_page():
             </div>
             ''', unsafe_allow_html=True)
 
-# Page Configuration
-st.set_page_config(
-    page_title="RedBus - Your Journey, Your Way",
-    page_icon="c:/Users/Haritha Sree D/Downloads/rdc-redbus-logo.webp",
-    layout="wide"
-)
+states_to_files = {
+    "Kerala": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_KR.csv",
+    "Kadamba": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_KT.csv",
+    "West Bengal": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_WB.csv",
+    "Bihar": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_BH.csv",
+    "Assam": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_AS.csv",
+    "Himachal": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_HP.csv",
+    "Chandigarh": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_CH.csv",
+    "Jammu": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_JK.csv",
+    "Telangana": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_TG.csv",
+    "Uttar Pradesh": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_UP.csv"
+}
+if page == "🔎 Search Buses":
+    st.title("Bus Routes by States")
+    price_range=["100-500","500-1000","1000 and above"]
+    states = ["Kerala", "Kadamba", "West Bengal", "Bihar", "Assam", "Himachal Pradesh", "Chandigarh", "Jammu and Kashmir", "Telangana", "Uttar Pradesh"]
+    selected_state = st.selectbox("Select a State", states)
 
-# Sidebar Navigation
-st.sidebar.title("REDBUS")
-page = st.sidebar.radio("Go to", ["📃 Home", "🔎 Search Buses"])
+    
+    if selected_state is not None:
+        
+        df = pd.read_csv(states_to_files[selected_state])
+        route_options = list(df[df.columns[0]])
+        selected_route = st.selectbox("Select a Route", route_options)
 
-# Page Selection
-if page == "📃 Home":
-    home_page()
-elif page == "🔎Search Buses":
-    states_page()
+    
+    if selected_route is not None:
+        selected_price = st.selectbox("Select a Price Range", price_range)
+
+        mydb = pymysql.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="project_one"
+        )
+        mycursor = mydb.cursor()
+
+        # Modify the query 
+        if selected_price == "100-500":
+            price_condition = "price BETWEEN 100 AND 500"
+        elif selected_price == "500-1000":
+            price_condition = "price BETWEEN 500 AND 1000"
+        else:  # "1000 and above"
+            price_condition = "price >= 1000"
+
+        # SQL query 
+        query = f"""
+        SELECT * FROM bus_routes 
+        WHERE route_name = %s AND {price_condition}
+        """
+        
+        # Execute the query 
+        mycursor.execute(query, (selected_route,))
+
+        # Fetch all the results
+        results = mycursor.fetchall()
+
+        # Create DataFrame
+        df = pd.DataFrame(results, columns=['ID', 'route_name', 'route_link', 'bus_name', 'bus_type', 
+                                            'departing_time', 'duration', 'reaching_time', 'star_rating', 
+                                            'price', 'seat_availability']) 
+        st.dataframe(df)
