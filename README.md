@@ -425,7 +425,7 @@ if page == "🔎 Search Buses":
     Network URL: http://192.168.1.100:8501 
 
 - Screenshot of the Output
-    ![App Screenshot]("D:\Haritha Sree D\Pictures\op1.png")
+![op1](https://github.com/user-attachments/assets/97621b88-16d8-454f-911c-da7b199e3659)
 
 
   
