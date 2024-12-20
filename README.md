@@ -40,7 +40,7 @@ Start the server
 ## Data Collection and Processing
 This application uses Selenium to scrape bus details for different states from Redbus. Below is an example code snippet for scraping data from one state. The same logic can be extended to the other states by changing the specific state names.
 
-- Python script for scraping from one state
+- Python script for scraping data from one state
 
 ```python
 from selenium import webdriver
@@ -214,6 +214,72 @@ print(df_CH_buses)
 df_CH_buses
 
 
+```
+- Python script for SQL database interaction
+
+SQL Connection
+
+```bash
+import mysql.connector
+
+mydb = mysql.connector.connect(
+ host="localhost",
+ user="root",
+ password="",
+)
+
+print(mydb)
+mycursor = mydb.cursor(buffered=True)
+```
+
+Create a database
+
+```bash
+  mycursor.execute("CREATE DATABASE project_one")
+```
+
+Create a table for that database
+
+```bash
+  mycursor.execute("""CREATE TABLE project_one.bus_routes(
+                 ID INT AUTO_INCREMENT PRIMARY KEY,
+                 route_name VARCHAR(255),
+                 route_link VARCHAR(255),
+                 bus_name VARCHAR(255),
+                 bus_type VARCHAR(255),
+                 departing_time VARCHAR(255),
+                 duration VARCHAR(255),
+                 reaching_time VARCHAR(255),
+                 star_rating FLOAT,
+                 price FLOAT,
+                 seat_availability VARCHAR(255) 
+                 
+                 )""")
+print("Table created successfully")
+  
+```
+
+Insert data into the created table
+
+```bash
+insert_query = """INSERT INTO project_one.bus_routes (
+                route_name,
+                route_link,
+                bus_name,
+                bus_type,
+                departing_time,
+                duration,
+                reaching_time,
+                star_rating,
+                price,
+                seat_availability
+                ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+
+# Convert DataFrame to list of tuples
+data = final_df.values.tolist()
+mycursor.executemany(insert_query, data)
+mydb.commit()
+print("values inserted successfully")
 ```
 
 
