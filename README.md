@@ -38,7 +38,7 @@ Start the server
   streamlit run app.py 
 ```
 ## Data Collection and Processing
-This application uses Selenium to scrape bus details for different states from Redbus. Below is the code snippet for scraping data from one state. The same logic can be extended to the other states by changing the specific state names and store this data in the SQL Database.
+This application uses Selenium to scrape bus details for different states from Redbus. Below is the code snippet for scraping data from one state. The same logic can be extended to the other states by changing the state-specific parameters and store this data in the SQL Database.
 
 - Python script for scraping data from one state
 
