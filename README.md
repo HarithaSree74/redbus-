@@ -425,7 +425,8 @@ if page == "🔎 Search Buses":
     Network URL: http://192.168.1.100:8501 
 
 - Screenshot of the Output
-![op1](https://github.com/user-attachments/assets/97621b88-16d8-454f-911c-da7b199e3659)
-
+  
+Home Page:![op1](https://github.com/user-attachments/assets/97621b88-16d8-454f-911c-da7b199e3659)
+States Selection Page:![op2](https://github.com/user-attachments/assets/bf19cbd3-cada-412d-a950-4dd8bbd4aa3b)
 
   
