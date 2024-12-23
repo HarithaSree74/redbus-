@@ -73,9 +73,9 @@ states_to_files = {
     "West Bengal": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_WB.csv",
     "Bihar": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_BH.csv",
     "Assam": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_AS.csv",
-    "Himachal": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_HP.csv",
+    "Himachal Pradesh": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_HP.csv",
     "Chandigarh": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_CH.csv",
-    "Jammu": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_JK.csv",
+    "Jammu and Kashmir": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_JK.csv",
     "Telangana": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_TG.csv",
     "Uttar Pradesh": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_UP.csv"
 }
