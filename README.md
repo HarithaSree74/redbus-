@@ -4,7 +4,10 @@ This project automates the extraction of bus travel data such as route name, rou
 ## Key Features
 - **State and Route Filtering**: Retrieve bus details by selecting a specific state and its associated route name.
 - **Price Range Customization**: Filter buses based on a user-defined price range for precise results.
-- **Targeted Bus Information**: Displays relevant details for buses matching the selected state, route name and price range criteria.
+- **Ratings Based Selection**: Filter buses based on user ratings to ensure quality travel experiences.
+- **Departure Time Customization**: Narrow down buses based on preferred departure times for convenience.
+- **Seat Availability Check**: Display only buses with available seats to avoid unnecessary searches.
+- **Targeted Bus Information**: Displays relevant details for buses matching the selected state, route name, price range criteria, ratings, departure time and seat availability.
 ## Technologies Used in this Project
 -  Web Scraping using Selenium
 -  Python
@@ -470,15 +473,14 @@ if page == "🔎 Search Buses":
 
 ```
 ## Streamlit Application Results
-- Links for the Streamlit Application 
+- Links for the Streamlit Application
 
     Local URL: http://localhost:8501
 
     Network URL: http://192.168.1.100:8501 
 
-- Screenshot of the Output
+- Output Visualization:
   
-Home Page:![op1](https://github.com/user-attachments/assets/97621b88-16d8-454f-911c-da7b199e3659)
-States Selection Page:![op2](https://github.com/user-attachments/assets/bf19cbd3-cada-412d-a950-4dd8bbd4aa3b)
+
 
   
