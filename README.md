@@ -372,26 +372,21 @@ states_to_files = {
 
 if page == "🔎 Search Buses":
     st.title("Bus Routes by States")
-    
+
     # Filter options
     price_range = ["100-500", "500-1000", "1000 and above"]
     time_slots = [
-    "Morning (06:00-12:00)",
-    "Afternoon (12:00-18:00)", 
-    "Evening (18:00-24:00)",
-    "Night (00:00-06:00)"
-      ]
+        "Morning (06:00-12:00)",
+        "Afternoon (12:00-18:00)",
+        "Evening (18:00-24:00)",
+        "Night (00:00-06:00)"
+    ]
     ratings = ["Any", "3★ & above", "4★ & above"]
-    availability =["All",
-        "Very Limited (1-5 seats)",
-        "Limited (6-10 seats)", 
-        "Available (11-20 seats)",
-        "Many Available (20+ seats)"
-       ]
+    availability = ["All", "Very Limited (1-5 seats)", "Limited (6-10 seats)", 
+                    "Available (11-20 seats)", "Many Available (20+ seats)"]
     
     states = ["Kerala", "Kadamba", "West Bengal", "Bihar", "Assam", "Himachal Pradesh", 
-              "Chandigarh", "Jammu and Kashmir", "Telangana", "Uttar Pradesh"] 
-    
+              "Chandigarh", "Jammu and Kashmir", "Telangana", "Uttar Pradesh"]
     selected_state = st.selectbox("Select a State", states)
 
     if selected_state is not None:
@@ -408,6 +403,7 @@ if page == "🔎 Search Buses":
             selected_rating = st.selectbox("Select Rating", ratings)
             selected_seats = st.selectbox("Select Seat Availability", availability)
 
+        # Database connection
         mydb = pymysql.connect(
             host="localhost",
             user="root",
@@ -439,10 +435,9 @@ if page == "🔎 Search Buses":
         elif selected_rating == "3★ & above":
             rating_condition = "star_rating >= 3"
         else:
-            rating_condition = "1=1"  # Always true   
+            rating_condition = "1=1"  # No rating filter
 
         # Seat availability condition
-        
         if selected_seats == "Very Limited (1-5 seats)":
             seat_condition = "seat_availability BETWEEN 1 AND 5"
         elif selected_seats == "Limited (6-10 seats)":
@@ -454,6 +449,7 @@ if page == "🔎 Search Buses":
         else:  # "All"
             seat_condition = "1=1"
 
+        # SQL query with all conditions
         query = f"""
         SELECT * FROM bus_routes 
         WHERE route_name = %s 
@@ -462,14 +458,19 @@ if page == "🔎 Search Buses":
         AND {rating_condition}
         AND {seat_condition}
         """
-        
+
+        # Execute query
         mycursor.execute(query, (selected_route,))
         results = mycursor.fetchall()
 
-        df = pd.DataFrame(results, columns=['ID', 'route_name', 'route_link', 'bus_name', 'bus_type', 
-                                          'departing_time', 'duration', 'reaching_time', 'star_rating', 
-                                          'price', 'seat_availability'])
-        st.dataframe(df)
+        # Display results
+        if results:
+            df = pd.DataFrame(results, columns=['ID', 'route_name', 'route_link', 'bus_name', 'bus_type', 
+                                                'departing_time', 'duration', 'reaching_time', 'star_rating', 
+                                                'price', 'seat_availability'])
+            st.dataframe(df)
+        else:
+            st.warning("No buses found matching your filters.")
 
 ```
 ## Streamlit Application Results
