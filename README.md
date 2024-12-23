@@ -481,7 +481,13 @@ if page == "🔎 Search Buses":
     Network URL: http://192.168.1.100:8501 
 
 - Output Visualization:
-  [Uploading Screen-Recording-2024-12-23-2138.zip…]()
+   Home Page:
+
+  ![op1](https://github.com/user-attachments/assets/27da39c5-44a8-4aab-a154-6b9240aa491a)
+
+  States Page:
+
+  
 
   
 
