@@ -290,7 +290,6 @@ The Streamlit application offers interactive and dynamic visualizations for the 
 ```python
 import streamlit as st
 import pandas as pd
-import mysql.connector
 import pymysql
 
 # Sidebar Navigation
