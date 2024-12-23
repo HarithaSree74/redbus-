@@ -287,6 +287,7 @@ The Streamlit application offers interactive and dynamic visualizations for the 
 ```python
 import streamlit as st
 import pandas as pd
+import mysql.connector
 import pymysql
 
 # Sidebar Navigation
@@ -359,28 +360,50 @@ states_to_files = {
     "West Bengal": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_WB.csv",
     "Bihar": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_BH.csv",
     "Assam": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_AS.csv",
-    "Himachal": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_HP.csv",
+    "Himachal Pradesh": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_HP.csv",
     "Chandigarh": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_CH.csv",
-    "Jammu": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_JK.csv",
+    "Jammu and Kashmir": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_JK.csv",
     "Telangana": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_TG.csv",
     "Uttar Pradesh": "C:/Users/Haritha Sree D/.vscode/project_redbus/scrap/df_UP.csv"
 }
+
 if page == "🔎 Search Buses":
     st.title("Bus Routes by States")
-    price_range=["100-500","500-1000","1000 and above"]
-    states = ["Kerala", "Kadamba", "West Bengal", "Bihar", "Assam", "Himachal Pradesh", "Chandigarh", "Jammu and Kashmir", "Telangana", "Uttar Pradesh"]
+    
+    # Filter options
+    price_range = ["100-500", "500-1000", "1000 and above"]
+    time_slots = [
+    "Morning (06:00-12:00)",
+    "Afternoon (12:00-18:00)", 
+    "Evening (18:00-24:00)",
+    "Night (00:00-06:00)"
+      ]
+    ratings = ["Any", "3★ & above", "4★ & above"]
+    availability =["All",
+        "Very Limited (1-5 seats)",
+        "Limited (6-10 seats)", 
+        "Available (11-20 seats)",
+        "Many Available (20+ seats)"
+       ]
+    
+    states = ["Kerala", "Kadamba", "West Bengal", "Bihar", "Assam", "Himachal Pradesh", 
+              "Chandigarh", "Jammu and Kashmir", "Telangana", "Uttar Pradesh"] 
+    
     selected_state = st.selectbox("Select a State", states)
 
-    
     if selected_state is not None:
-        
         df = pd.read_csv(states_to_files[selected_state])
         route_options = list(df[df.columns[0]])
         selected_route = st.selectbox("Select a Route", route_options)
 
-    
     if selected_route is not None:
-        selected_price = st.selectbox("Select a Price Range", price_range)
+        col1, col2 = st.columns(2)
+        with col1:
+            selected_price = st.selectbox("Select Price Range", price_range)
+            selected_time = st.selectbox("Select Departure Time", time_slots)
+        with col2:
+            selected_rating = st.selectbox("Select Rating", ratings)
+            selected_seats = st.selectbox("Select Seat Availability", availability)
 
         mydb = pymysql.connect(
             host="localhost",
@@ -390,31 +413,60 @@ if page == "🔎 Search Buses":
         )
         mycursor = mydb.cursor()
 
-        # Modify the query 
+        # Price condition
         if selected_price == "100-500":
             price_condition = "price BETWEEN 100 AND 500"
         elif selected_price == "500-1000":
             price_condition = "price BETWEEN 500 AND 1000"
-        else:  # "1000 and above"
+        else:
             price_condition = "price >= 1000"
 
-        # SQL query 
+        # Time condition
+        time_conditions = {
+            "Morning (06:00-12:00)": "departing_time BETWEEN '06:00' AND '12:00'",
+            "Afternoon (12:00-18:00)": "departing_time BETWEEN '12:00' AND '18:00'",
+            "Evening (18:00-24:00)": "departing_time BETWEEN '18:00' AND '24:00'",
+            "Night (00:00-06:00)": "departing_time BETWEEN '00:00' AND '06:00'"
+        }
+        time_condition = time_conditions[selected_time]
+
+        # Rating condition
+        if selected_rating == "4★ & above":
+            rating_condition = "star_rating >= 4"
+        elif selected_rating == "3★ & above":
+            rating_condition = "star_rating >= 3"
+        else:
+            rating_condition = "1=1"  # Always true   
+
+        # Seat availability condition
+        
+        if selected_seats == "Very Limited (1-5 seats)":
+            seat_condition = "seat_availability BETWEEN 1 AND 5"
+        elif selected_seats == "Limited (6-10 seats)":
+            seat_condition = "seat_availability BETWEEN 6 AND 10"
+        elif selected_seats == "Available (11-20 seats)":
+            seat_condition = "seat_availability BETWEEN 11 AND 20"
+        elif selected_seats == "Many Available (20+ seats)":
+            seat_condition = "seat_availability > 20"
+        else:  # "All"
+            seat_condition = "1=1"
+
         query = f"""
         SELECT * FROM bus_routes 
-        WHERE route_name = %s AND {price_condition}
+        WHERE route_name = %s 
+        AND {price_condition}
+        AND {time_condition}
+        AND {rating_condition}
+        AND {seat_condition}
         """
         
-        # Execute the query 
         mycursor.execute(query, (selected_route,))
-
-        # Fetch all the results
         results = mycursor.fetchall()
 
-        # Create DataFrame
         df = pd.DataFrame(results, columns=['ID', 'route_name', 'route_link', 'bus_name', 'bus_type', 
-                                            'departing_time', 'duration', 'reaching_time', 'star_rating', 
-                                            'price', 'seat_availability']) 
-        st.dataframe(df) 
+                                          'departing_time', 'duration', 'reaching_time', 'star_rating', 
+                                          'price', 'seat_availability'])
+        st.dataframe(df)
 
 ```
 ## Streamlit Application Results
