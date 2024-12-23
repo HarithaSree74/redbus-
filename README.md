@@ -481,6 +481,8 @@ if page == "🔎 Search Buses":
     Network URL: http://192.168.1.100:8501 
 
 - Output Visualization:
+  [Uploading Screen-Recording-2024-12-23-2138.zip…]()
+
   
 
 
